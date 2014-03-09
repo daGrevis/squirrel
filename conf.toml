@@ -1,0 +1,18 @@
+blog_name = "No Bullshit Static Blogging"
+blog_theme = "simple"
+
+metadata_file = "metadata.toml"
+index_file = "index.html"
+path_to_generated_content = "generated_content/"
+path_to_articles = "articles/"
+path_to_themes = "themes/"
+required_keys_in_article = [
+    "title",
+    "created",
+    "content_path"
+]
+forbidden_keys_in_article = [
+    "raw_content",
+    "content"
+]
+

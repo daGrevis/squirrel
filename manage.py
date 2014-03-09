@@ -10,14 +10,16 @@ import toml
 import markdown
 import jinja2
 
-import conf
-
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
+
+
+with open("conf.toml") as conf_file:
+    conf = toml.loads(conf_file.read())
 
 
 def get_dirs_for_articles():
@@ -28,8 +30,8 @@ def get_dirs_for_articles():
 
     dirs = []
 
-    for root, _, files in os.walk(conf.PATH_TO_ARTICLES):
-        for file_path in fnmatch.filter(files, conf.METADATA_FILE):
+    for root, _, files in os.walk(conf["path_to_articles"]):
+        for file_path in fnmatch.filter(files, conf["metadata_file"]):
             dir = path.dirname(path.join(root, file_path))
             dirs.append(dir)
 
@@ -46,16 +48,16 @@ def get_articles_from_dirs(dirs):
     for dir in dirs:
         article = {}
 
-        with open(path.join(dir, conf.METADATA_FILE)) as metadata_file:
+        with open(path.join(dir, conf["metadata_file"])) as metadata_file:
             article = toml.loads(metadata_file.read())
 
         try:
-            for key in conf.REQUIRED_KEYS_IN_ARTICLE:
+            for key in conf["required_keys_in_article"]:
                 article[key]
         except KeyError:
             logging.error("Required key is missing in metadata file!")
             exit()
-        for key in conf.FORBIDDEN_KEYS_IN_ARTICLE:
+        for key in conf["forbidden_keys_in_article"]:
             if key in article:
                 logging.error("Forbidden key is in metadata file!")
                 exit()
@@ -84,13 +86,13 @@ def get_articles():
 
 
 def get_path_to_theme():
-    return path.join(conf.PATH_TO_THEMES, conf.THEME)
+    return path.join(conf["path_to_themes"], conf["blog_theme"])
 
 
 def generate_articles(articles):
     for article in articles:
-        dir_path = path.join(conf.PATH_TO_GENERATED_CONTENT, article["slug"])
-        file_path = path.join(dir_path, conf.INDEX_FILE)
+        dir_path = path.join(conf["path_to_generated_content"], article["slug"])
+        file_path = path.join(dir_path, conf["index_file"])
 
         article["content"] = markdown.markdown(article["raw_content"])
 
@@ -107,7 +109,7 @@ def generate_articles(articles):
 
 def generate():
     clean()  # TODO: Re-think what should happen when dir is not empty.
-    os.mkdir(conf.PATH_TO_GENERATED_CONTENT)
+    os.mkdir(conf["path_to_generated_content"])
 
     articles = get_articles()
     generate_articles(articles)
@@ -117,7 +119,7 @@ def generate():
 
 def clean():
     try:
-        shutil.rmtree(conf.PATH_TO_GENERATED_CONTENT)
+        shutil.rmtree(conf["path_to_generated_content"])
         logger.info("Cleaned!")
     except FileNotFoundError:
         logger.info("Clean already!")
