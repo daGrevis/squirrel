@@ -18,10 +18,12 @@ ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 
 
+# Loads conf from conf.toml.
 with open("conf.toml") as conf_file:
     conf = toml.loads(conf_file.read())
 
 
+# Inits templating.
 path_to_theme = path.join(conf["path_to_themes"], conf["blog_theme"])
 jinja2_loader = jinja2.FileSystemLoader(path_to_theme)
 jinja2_env = jinja2.Environment(loader=jinja2_loader)
