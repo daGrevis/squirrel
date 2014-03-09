@@ -4,7 +4,9 @@ Current commands:
 
 * `./squirrel.py generate`,
 
-* `./squirrel.py clean`;
+* `./squirrel.py clean`,
+
+* `./squirrel.py serve`;
 
     articles
     ├── 2014

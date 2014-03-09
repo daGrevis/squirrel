@@ -6,6 +6,8 @@ import argparse
 import shutil
 import fnmatch
 import glob
+import http.server as http_server
+import socketserver
 
 import toml
 import markdown
@@ -122,7 +124,10 @@ def generate_articles(articles):
 
 def generate():
     clean()  # TODO: Re-think what should happen when dir is not empty.
-    os.mkdir(conf["path_to_generated_content"])
+    try:
+        os.mkdir(conf["path_to_generated_content"])
+    except FileExistsError:
+        pass
 
     dirs = get_dirs_for_articles()
     articles = get_articles_from_dirs(dirs)
@@ -136,10 +141,38 @@ def generate():
 
 def clean():
     try:
-        shutil.rmtree(conf["path_to_generated_content"])
-        logger.info("Cleaned!")
+        names = os.listdir(conf["path_to_generated_content"])
     except FileNotFoundError:
-        logger.info("Clean already!")
+        logger.info("Already clean!")
+        return
+
+    for name in names:
+        name_path = path.join(conf["path_to_generated_content"], name)
+        try:
+            os.unlink(name_path)
+        except IsADirectoryError:
+            shutil.rmtree(name_path)
+
+    logger.info("Cleaned!")
+
+
+class ReusableAddressTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
+
+def serve():
+    link = "http://127.0.0.1:{}/".format(conf["server_port"])
+    logger.info("Serving on {}!".format(link))
+
+    os.chdir(conf["path_to_generated_content"])
+
+    httpd = ReusableAddressTCPServer(("", conf["server_port"]),
+                                     http_server.SimpleHTTPRequestHandler)
+
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        httpd.shutdown()
 
 
 parser = argparse.ArgumentParser()
@@ -152,6 +185,8 @@ if args.action == "generate":
     generate()
 elif args.action == "clean":
     clean()
+elif args.action == "serve":
+    serve()
 else:
     logger.error("Unknow action!")
     exit()

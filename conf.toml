@@ -19,3 +19,4 @@ forbidden_keys_in_article = [
     "raw_content",
     "content"
 ]
+server_port = 8000
