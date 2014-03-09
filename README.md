@@ -1,3 +1,7 @@
+# Squirrel
+
+## No Bullshit Static Blogging
+
 ![Squirrel](http://i.imgur.com/ibp6Bhc.jpg)
 
 Current commands:
@@ -8,15 +12,17 @@ Current commands:
 
 * `./squirrel.py serve`;
 
-    articles
-    ├── 2014
-    │   └── 04
-    │       └── april-fools
-    │           ├── content.md
-    │           └── metadata.toml
-    └── hello-world
-        ├── content.md
-        └── metadata.toml
+~~~
+articles
+├── 2014
+│   └── 04
+│       └── april-fools
+│           ├── content.md
+│           └── metadata.toml
+└── hello-world
+    ├── content.md
+    └── metadata.toml
+~~~
 
 Location for article directories doesn't matter until they are somewhere in
 `path_to_generated_content` constant defined in `conf.toml` configuration. Each
