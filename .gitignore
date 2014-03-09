@@ -1,0 +1,7 @@
+/articles/
+/bin/
+/include/
+/lib/
+/man/
+*.py[co]
+/share/
