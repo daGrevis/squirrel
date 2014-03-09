@@ -22,6 +22,11 @@ with open("conf.toml") as conf_file:
     conf = toml.loads(conf_file.read())
 
 
+path_to_theme = path.join(conf["path_to_themes"], conf["blog_theme"])
+jinja2_loader = jinja2.FileSystemLoader(path_to_theme)
+jinja2_env = jinja2.Environment(loader=jinja2_loader)
+
+
 def get_dirs_for_articles():
     """
     Gets directories that are valid articles. Valid is any directory that
@@ -77,33 +82,29 @@ def get_articles_from_dirs(dirs):
     return articles
 
 
-def get_articles():
-    dirs = get_dirs_for_articles()
+def generate_index(articles):
+    template = jinja2_env.get_template("index.html")
+    content = template.render(conf=conf, articles=articles)
 
-    articles = get_articles_from_dirs(dirs)
-
-    return articles
-
-
-def get_path_to_theme():
-    return path.join(conf["path_to_themes"], conf["blog_theme"])
+    path_to_index_file = path.join(conf["path_to_generated_content"],
+                                   conf["index_file"])
+    with open(path_to_index_file, "w") as index_file:
+        index_file.write(content)
 
 
 def generate_articles(articles):
     for article in articles:
-        dir_path = path.join(conf["path_to_generated_content"], article["slug"])
-        file_path = path.join(dir_path, conf["index_file"])
+        path_to_article_dir = path.join(conf["path_to_generated_content"],
+                                        article["slug"])
+        path_to_index_file = path.join(path_to_article_dir, conf["index_file"])
 
         article["content"] = markdown.markdown(article["raw_content"])
 
-        path_to_theme = get_path_to_theme()
-        jinja2_loader = jinja2.FileSystemLoader(path_to_theme)
-        jinja2_env = jinja2.Environment(loader=jinja2_loader)
         template = jinja2_env.get_template("article.html")
         content = template.render(conf=conf, article=article)
 
-        os.mkdir(dir_path)
-        with open(file_path, "w") as index_file:
+        os.mkdir(path_to_article_dir)
+        with open(path_to_index_file, "w") as index_file:
             index_file.write(content)
 
 
@@ -111,7 +112,10 @@ def generate():
     clean()  # TODO: Re-think what should happen when dir is not empty.
     os.mkdir(conf["path_to_generated_content"])
 
-    articles = get_articles()
+    dirs = get_dirs_for_articles()
+    articles = get_articles_from_dirs(dirs)
+
+    generate_index(articles)
     generate_articles(articles)
 
     logger.info("Generated!")
