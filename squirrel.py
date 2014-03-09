@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import os.path as path
 import logging
@@ -152,4 +153,5 @@ if args.action == "generate":
 elif args.action == "clean":
     clean()
 else:
-    exit("Unknow action!")
+    logger.error("Unknow action!")
+    exit()
