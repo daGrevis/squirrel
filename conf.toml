@@ -11,6 +11,7 @@ path_to_theme_static = "static/"
 path_to_generated_static = "static/"
 required_keys_in_article = [
     "title",
+    "slug",
     "created",
     "content_path"
 ]
