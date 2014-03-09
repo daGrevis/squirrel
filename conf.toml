@@ -1,11 +1,14 @@
-blog_name = "No Bullshit Static Blogging"
-blog_theme = "simple"
+blog_title = "Squirrel"
+blog_description = "No Bullshit Static Blogging"
+blog_theme = "bootstrap"
 
 metadata_file = "metadata.toml"
 index_file = "index.html"
 path_to_generated_content = "generated_content/"
 path_to_articles = "articles/"
 path_to_themes = "themes/"
+path_to_theme_static = "static/"
+path_to_generated_static = "static/"
 required_keys_in_article = [
     "title",
     "created",
@@ -15,4 +18,3 @@ forbidden_keys_in_article = [
     "raw_content",
     "content"
 ]
-

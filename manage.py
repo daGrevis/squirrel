@@ -79,9 +79,20 @@ def get_articles_from_dirs(dirs):
         with open(content_path) as content_file:
             article["raw_content"] = content_file.read()
 
+        article["content"] = markdown.markdown(article["raw_content"])
+
         articles.append(article)
 
     return articles
+
+
+def generate_static_for_theme():
+    path_to_theme_static = path.join(path_to_theme,
+                                     conf["path_to_theme_static"])
+    path_to_generated_static = path.join(conf["path_to_generated_content"],
+                                         conf["path_to_generated_static"])
+
+    shutil.copytree(path_to_theme_static, path_to_generated_static)
 
 
 def generate_index(articles):
@@ -100,8 +111,6 @@ def generate_articles(articles):
                                         article["slug"])
         path_to_index_file = path.join(path_to_article_dir, conf["index_file"])
 
-        article["content"] = markdown.markdown(article["raw_content"])
-
         template = jinja2_env.get_template("article.html")
         content = template.render(conf=conf, article=article)
 
@@ -117,6 +126,7 @@ def generate():
     dirs = get_dirs_for_articles()
     articles = get_articles_from_dirs(dirs)
 
+    generate_static_for_theme()
     generate_index(articles)
     generate_articles(articles)
 

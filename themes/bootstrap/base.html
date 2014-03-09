@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link href="/static/vendor/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+        <link href="/static/styles/main.css" rel="stylesheet">
+
+        <title>{% block title %}{{ conf.blog_title }}{% endblock %}</title>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>{{ conf.blog_title }}</h1>
+                <p>{{ conf.blog_description }}</p>
+            </header>
+
+            <div class="row">
+                <div class="col-sm-8 blog-main">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -5,3 +5,5 @@
 /man/
 *.py[co]
 /share/
+**/vendor/
+/generated_content/

@@ -4,7 +4,7 @@
 
     <ul>
         {% for article in articles|sort(attribute="created", reverse=True) %}
-            <li>{{ article.title }}</li>
+            <li><a href="{{ article.slug }}">{{ article.title }}</a></li>
         {% endfor %}
     </ul>
 
