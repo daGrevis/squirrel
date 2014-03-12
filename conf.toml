@@ -3,7 +3,8 @@ blog_description = "No Bullshit Static Blogging"
 blog_theme = "bootstrap"
 plugins = [
     "filesystem_loader_for_squirrel",
-    "dummy_plugin_for_squirrel"
+    "clean_command_for_squirrel",
+    "generate_command_for_squirrel"
 ]
 
 metadata_file = "metadata.toml"

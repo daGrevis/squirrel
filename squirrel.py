@@ -2,7 +2,6 @@
 import os
 import os.path as path
 import logging
-import argparse
 import shutil
 import http.server as http_server
 import socketserver
@@ -42,7 +41,7 @@ ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 
 
-# Loads conf from conf.toml.
+# Loads conf from `conf.toml`.
 with open("conf.toml") as conf_file:
     conf = toml.loads(conf_file.read())
 
@@ -77,74 +76,12 @@ for plugin_name in conf["plugins"]:
 
 
 context = {
+    "is_called_from_cli": __name__ == "__main__",
     "conf": conf,
+    "path_to_theme": path_to_theme,
     "jinja2_env": jinja2_env,
 }
 middlewares.run(context)
-
-
-def generate_static_for_theme():
-    path_to_theme_static = path.join(path_to_theme,
-                                     conf["path_to_theme_static"])
-    path_to_generated_static = path.join(conf["path_to_generated_content"],
-                                         conf["path_to_generated_static"])
-
-    shutil.copytree(path_to_theme_static, path_to_generated_static)
-
-
-def generate_index(articles):
-    template = jinja2_env.get_template("index.html")
-    content = template.render(conf=conf, articles=articles)
-
-    path_to_index_file = path.join(conf["path_to_generated_content"],
-                                   conf["index_file"])
-    with open(path_to_index_file, "w") as index_file:
-        index_file.write(content)
-
-
-def generate_articles(articles):
-    for article in articles:
-        path_to_article_dir = path.join(conf["path_to_generated_content"],
-                                        article["slug"])
-        path_to_index_file = path.join(path_to_article_dir, conf["index_file"])
-
-        template = jinja2_env.get_template("article.html")
-        content = template.render(conf=conf, article=article)
-
-        os.mkdir(path_to_article_dir)
-        with open(path_to_index_file, "w") as index_file:
-            index_file.write(content)
-
-
-def generate():
-    clean()  # TODO: Re-think what should happen when dir is not empty.
-    try:
-        os.mkdir(conf["path_to_generated_content"])
-    except FileExistsError:
-        pass
-
-    generate_static_for_theme()
-    generate_index(articles)
-    generate_articles(articles)
-
-    logger.info("Generated!")
-
-
-def clean():
-    try:
-        names = os.listdir(conf["path_to_generated_content"])
-    except FileNotFoundError:
-        logger.info("Already clean!")
-        return
-
-    for name in names:
-        name_path = path.join(conf["path_to_generated_content"], name)
-        try:
-            os.unlink(name_path)
-        except IsADirectoryError:
-            shutil.rmtree(name_path)
-
-    logger.info("Cleaned!")
 
 
 class ReusableAddressTCPServer(socketserver.TCPServer):
@@ -164,22 +101,3 @@ def serve():
         httpd.serve_forever()
     except KeyboardInterrupt:
         httpd.shutdown()
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("action")
-
-    args = parser.parse_args()
-
-    if args.action == "generate":
-        # generate()
-        pass
-    elif args.action == "clean":
-        clean()
-    elif args.action == "serve":
-        serve()
-    else:
-        logger.error("Unknow action!")
-        exit()
