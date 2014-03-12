@@ -24,7 +24,6 @@ REQUIRED_KEYS_IN_CONF = (
     "path_to_generated_static",
     "required_keys_in_article",
     "forbidden_keys_in_article",
-    "server_port",
     "name_for_injection_callable",
 )
 
