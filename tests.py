@@ -2,112 +2,135 @@
 import unittest
 
 from ware import (Ware, MiddlewareDuplicationError, MiddlewareMissingError,
-                  MiddlewareOrderError)
+                  MiddlewareOrderError, MiddlewareArgumentsError)
 
 
 class TestWare(unittest.TestCase):
 
     def setUp(self):
-        def fake_callable():
-            pass
+        def dummy_callable(data):
+            return data
 
-        self.fake_callable = fake_callable
+        self.dummy_callable = dummy_callable
 
     def test_add(self):
-        middleware = Ware()
-        middleware.add("a", self.fake_callable)
+        def my_callable():
+            pass
+
+        middlewares = Ware()
+        with self.assertRaises(MiddlewareArgumentsError):
+            middlewares.add("a", my_callable)
+
+        middlewares = Ware()
+        middlewares.add("a", self.dummy_callable)
         with self.assertRaises(MiddlewareDuplicationError):
-            middleware.add("a", self.fake_callable)
+            middlewares.add("a", self.dummy_callable)
 
-        middleware = Ware()
+        middlewares = Ware()
         with self.assertRaises(MiddlewareMissingError):
-            middleware.add("b", self.fake_callable,
-                           names_for_before_middlewares=["a"])
+            middlewares.add("b", self.dummy_callable,
+                            names_for_before_middlewares=["a"])
 
-        middleware = Ware()
+        middlewares = Ware()
         with self.assertRaises(MiddlewareMissingError):
-            middleware.add("a", self.fake_callable,
+             middlewares.add("a", self.dummy_callable,
                            names_for_after_middlewares=["b"])
 
-        middleware = Ware()
+        middlewares = Ware()
 
-        middleware.add("a", self.fake_callable)
-        self.assertEqual(middleware.middlewares, [("a", self.fake_callable, )])
+        middlewares.add("a", self.dummy_callable)
+        self.assertEqual(middlewares.middlewares,
+                         [("a", self.dummy_callable, )])
 
-        middleware.add("b", self.fake_callable)
-        self.assertEqual(middleware.middlewares,
-                         [("a", self.fake_callable, ),
-                          ("b", self.fake_callable, )])
+        middlewares.add("b", self.dummy_callable)
+        self.assertEqual(middlewares.middlewares,
+                         [("a", self.dummy_callable, ),
+                          ("b", self.dummy_callable, )])
 
-        middleware.add("c", self.fake_callable,
+        middlewares.add("c", self.dummy_callable,
                        names_for_before_middlewares=["a", "b"])
-        self.assertEqual(middleware.middlewares,
-                         [("a", self.fake_callable, ),
-                          ("b", self.fake_callable, ),
-                          ("c", self.fake_callable, )])
+        self.assertEqual(middlewares.middlewares,
+                         [("a", self.dummy_callable, ),
+                          ("b", self.dummy_callable, ),
+                          ("c", self.dummy_callable, )])
 
-        middleware.add("d", self.fake_callable,
+        middlewares.add("d", self.dummy_callable,
                        names_for_after_middlewares=["a", "b", "c"])
-        self.assertEqual(middleware.middlewares,
-                         [("d", self.fake_callable, ),
-                          ("a", self.fake_callable, ),
-                          ("b", self.fake_callable, ),
-                          ("c", self.fake_callable, )])
+        self.assertEqual(middlewares.middlewares,
+                         [("d", self.dummy_callable, ),
+                          ("a", self.dummy_callable, ),
+                          ("b", self.dummy_callable, ),
+                          ("c", self.dummy_callable, )])
 
         with self.assertRaises(MiddlewareOrderError):
-            middleware.add("e", self.fake_callable,
+            middlewares.add("e", self.dummy_callable,
                            names_for_before_middlewares=["d", "a"],
                            names_for_after_middlewares=["a", "b"])
 
-        middleware.add("e", self.fake_callable,
+        middlewares.add("e", self.dummy_callable,
                        names_for_before_middlewares=["d", "a"],
                        names_for_after_middlewares=["b", "c"])
-        self.assertEqual(middleware.middlewares,
-                         [("d", self.fake_callable, ),
-                          ("a", self.fake_callable, ),
-                          ("e", self.fake_callable, ),
-                          ("b", self.fake_callable, ),
-                          ("c", self.fake_callable, )])
+        self.assertEqual(middlewares.middlewares,
+                         [("d", self.dummy_callable, ),
+                          ("a", self.dummy_callable, ),
+                          ("e", self.dummy_callable, ),
+                          ("b", self.dummy_callable, ),
+                          ("c", self.dummy_callable, )])
 
     def test_get_names_for_middlewares(self):
-        middleware = Ware()
+        middlewares = Ware()
 
-        middleware.add("a", self.fake_callable)
-        self.assertEqual(middleware.get_names_for_middlewares(), ["a"])
+        middlewares.add("a", self.dummy_callable)
+        self.assertEqual(middlewares.get_names_for_middlewares(), ["a"])
 
-        middleware.add("b", self.fake_callable)
-        self.assertEqual(middleware.get_names_for_middlewares(), ["a", "b"])
+        middlewares.add("b", self.dummy_callable)
+        self.assertEqual(middlewares.get_names_for_middlewares(), ["a", "b"])
 
     def test_remove(self):
-        middleware = Ware()
+        middlewares = Ware()
         with self.assertRaises(MiddlewareMissingError):
-            middleware.remove("a")
+            middlewares.remove("a")
 
-        middleware = Ware()
+        middlewares = Ware()
 
-        middleware.add("a", self.fake_callable)
-        middleware.remove("a")
-        self.assertEqual(middleware.middlewares, [])
+        middlewares.add("a", self.dummy_callable)
+        middlewares.remove("a")
+        self.assertEqual(middlewares.middlewares, [])
 
-        middleware.add("a", self.fake_callable)
-        middleware.add("b", self.fake_callable)
-        middleware.remove("b")
-        self.assertEqual(middleware.middlewares, [("a", self.fake_callable, )])
+        middlewares.add("a", self.dummy_callable)
+        middlewares.add("b", self.dummy_callable)
+        middlewares.remove("b")
+        self.assertEqual(middlewares.middlewares,
+                         [("a", self.dummy_callable, )])
 
     def test_run(self):
-        def my_callable():
+        def my_callable(data):
             raise AssertionError()
 
-        middleware = Ware()
-        middleware.add("a", my_callable)
+        middlewares = Ware()
+        middlewares.add("a", my_callable)
         with self.assertRaises(AssertionError):
-            middleware.run()
+            middlewares.run()
 
-        middleware = Ware()
-        middleware.add("a", self.fake_callable)
-        middleware.add("b", my_callable)
+        middlewares = Ware()
+        middlewares.add("a", self.dummy_callable)
+        middlewares.add("b", my_callable)
         with self.assertRaises(AssertionError):
-            middleware.run()
+            middlewares.run()
+
+        def add_2(data):
+            data["x"] += 2
+            return data
+
+        def square(data):
+            data["x"] = data["x"] * data["x"]
+            return data
+
+        middlewares = Ware()
+        middlewares.add("add_2", add_2)
+        middlewares.add("square", square)
+        data = middlewares.run({"x": 1})
+        self.assertEqual(data["x"], 9)
 
 
 if __name__ == "__main__":
