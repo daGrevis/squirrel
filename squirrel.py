@@ -37,6 +37,7 @@ REQUIRED_KEYS_IN_CONF = (
 )
 
 
+# Inits logging.
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
@@ -54,8 +55,14 @@ for key in REQUIRED_KEYS_IN_CONF:
         exit()
 
 
-middlewares = Ware()
+# Inits templating.
+path_to_theme = path.join(conf["path_to_themes"], conf["blog_theme"])
+jinja2_loader = jinja2.FileSystemLoader(path_to_theme)
+jinja2_env = jinja2.Environment(loader=jinja2_loader)
 
+
+# Inits plugins.
+middlewares = Ware()
 for plugin_name in conf["plugins"]:
     try:
         plugin = importlib.import_module(plugin_name)
@@ -72,10 +79,11 @@ for plugin_name in conf["plugins"]:
     middlewares = plugin.inject_middlewares(middlewares)
 
 
-# Inits templating.
-path_to_theme = path.join(conf["path_to_themes"], conf["blog_theme"])
-jinja2_loader = jinja2.FileSystemLoader(path_to_theme)
-jinja2_env = jinja2.Environment(loader=jinja2_loader)
+context = {
+    "conf": conf,
+    "jinja2_env": jinja2_env,
+}
+middlewares.run(context)
 
 
 def get_dirs_for_articles():

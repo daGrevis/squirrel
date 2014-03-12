@@ -2,7 +2,7 @@ blog_title = "Squirrel"
 blog_description = "No Bullshit Static Blogging"
 blog_theme = "bootstrap"
 plugins = [
-    "markdown_for_squirrel"
+    "dummy_plugin_for_squirrel"
 ]
 
 metadata_file = "metadata.toml"

@@ -129,8 +129,8 @@ class TestWare(unittest.TestCase):
         middlewares = Ware()
         middlewares.add("add_2", add_2)
         middlewares.add("square", square)
-        data = middlewares.run({"x": 1})
-        self.assertEqual(data["x"], 9)
+        context = middlewares.run({"x": 1})
+        self.assertEqual(context["x"], 9)
 
 
 if __name__ == "__main__":

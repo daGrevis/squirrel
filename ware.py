@@ -113,8 +113,8 @@ class Ware(object):
                 (self.middlewares).pop(i)
                 break
 
-    def run(self, initial_data={}):
-        data = initial_data
+    def run(self, initial_context={}):
+        context = initial_context
         for _, middleware_callable in self.middlewares:
-            data = middleware_callable(data)
-        return data
+            context = middleware_callable(context)
+        return context
