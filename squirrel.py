@@ -82,22 +82,3 @@ context = {
     "jinja2_env": jinja2_env,
 }
 middlewares.run(context)
-
-
-class ReusableAddressTCPServer(socketserver.TCPServer):
-    allow_reuse_address = True
-
-
-def serve():
-    link = "http://127.0.0.1:{}/".format(conf["server_port"])
-    logger.info("Serving on {}!".format(link))
-
-    os.chdir(conf["path_to_generated_content"])
-
-    httpd = ReusableAddressTCPServer(("", conf["server_port"]),
-                                     http_server.SimpleHTTPRequestHandler)
-
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        httpd.shutdown()
