@@ -1,6 +1,9 @@
 blog_title = "Squirrel"
 blog_description = "No Bullshit Static Blogging"
 blog_theme = "bootstrap"
+plugins = [
+    "markdown_for_squirrel"
+]
 
 metadata_file = "metadata.toml"
 index_file = "index.html"
@@ -20,3 +23,4 @@ forbidden_keys_in_article = [
     "content"
 ]
 server_port = 8000
+name_for_injection_callable = "inject_middlewares"

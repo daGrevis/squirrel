@@ -8,10 +8,33 @@ import fnmatch
 import glob
 import http.server as http_server
 import socketserver
+import importlib
 
 import toml
 import markdown
 import jinja2
+
+
+from ware import Ware
+
+
+REQUIRED_KEYS_IN_CONF = (
+    "blog_title",
+    "blog_description",
+    "blog_theme",
+    "plugins",
+    "metadata_file",
+    "index_file",
+    "path_to_generated_content",
+    "path_to_articles",
+    "path_to_themes",
+    "path_to_theme_static",
+    "path_to_generated_static",
+    "required_keys_in_article",
+    "forbidden_keys_in_article",
+    "server_port",
+    "name_for_injection_callable",
+)
 
 
 logger = logging.getLogger(__name__)
@@ -21,111 +44,32 @@ ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 
 
-class MiddlewareDuplicationError(Exception):
-    def __init__(self, middleware_name, middleware_names):
-        message = ("Middleware `{}` was already found in `{}` middlewares!"
-                   .format(middleware_name, middleware_names))
-        super().__init__(message)
-
-
-class MiddlewareMissingError(Exception):
-    def __init__(self, middleware_name, middleware_names):
-        message = ("Middleware `{}` wasn't found between `{}` middlewares!"
-                   .format(middleware_name, middleware_names))
-        super().__init__(message)
-
-
-class MiddlewareOrderError(Exception):
-    def __init__(self, middleware_name,
-                 names_for_before_middlewares, names_for_after_middlewares):
-        message = ("Middleware `{}` can't be added before `{}` middlewares"
-                    " and after `{}` middlewares!"
-                   .format(middleware_name,
-                           names_for_before_middlewares,
-                           names_for_after_middlewares))
-        super().__init__(message)
-
-
-class Ware(object):
-    def __init__(self, middlewares=[]):
-        self.middlewares = []
-
-    def get_names_for_middlewares(self):
-        return [name for name, _ in self.middlewares]
-
-    def add(self, middleware_name, middleware_callable,
-            names_for_before_middlewares=[], names_for_after_middlewares=[]):
-
-        names_for_middlewares = self.get_names_for_middlewares()
-
-        if middleware_name in names_for_middlewares:
-            raise MiddlewareDuplicationError(middleware_name,
-                                             names_for_middlewares)
-
-        if not names_for_before_middlewares and not names_for_after_middlewares:
-            (self.middlewares).append((middleware_name, middleware_callable, ))
-            return
-
-        for name in names_for_before_middlewares:
-            if name not in names_for_middlewares:
-                raise MiddlewareMissingError(name, names_for_middlewares)
-
-        for name in names_for_after_middlewares:
-            if name not in names_for_middlewares:
-                raise MiddlewareMissingError(name, names_for_middlewares)
-
-        if names_for_before_middlewares and not names_for_after_middlewares:
-            (self.middlewares).append((middleware_name, middleware_callable, ))
-            return
-
-        if not names_for_before_middlewares and names_for_after_middlewares:
-            (self.middlewares).insert(0,
-                                      (middleware_name, middleware_callable, ))
-            return
-
-        if names_for_before_middlewares and names_for_after_middlewares:
-
-            max_index_for_before_middlewares = 0
-            for name in names_for_before_middlewares:
-                i = names_for_middlewares.index(name)
-                if i > max_index_for_before_middlewares:
-                    max_index_for_before_middlewares = i
-
-            min_index_for_after_middlewares = len(names_for_middlewares)
-            for name in names_for_after_middlewares:
-                i = names_for_middlewares.index(name)
-                if i < min_index_for_after_middlewares:
-                    min_index_for_after_middlewares = i
-
-            if (max_index_for_before_middlewares
-                >= min_index_for_after_middlewares):
-                raise MiddlewareOrderError(middleware_name,
-                                           names_for_before_middlewares,
-                                           names_for_after_middlewares)
-
-            (self.middlewares).insert(min_index_for_after_middlewares,
-                                      (middleware_name, middleware_callable, ))
-            return
-
-    def remove(self, middleware_name):
-        names_for_middlewares = self.get_names_for_middlewares()
-
-        if middleware_name not in names_for_middlewares:
-            raise MiddlewareMissingError(middleware_name, names_for_middlewares)
-
-        for i, (name, _) in enumerate(self.middlewares):
-            if name == middleware_name:
-                (self.middlewares).pop(i)
-                break
-
-    def run(self):
-        for _, middleware_callable in self.middlewares:
-            middleware_callable()
-
-
 # Loads conf from conf.toml.
 with open("conf.toml") as conf_file:
     conf = toml.loads(conf_file.read())
+
+for key in REQUIRED_KEYS_IN_CONF:
+    if key not in conf:
+        logger.error("Conf is missing key `{}`!".format(key))
+        exit()
+
+
+middlewares = Ware()
+
+for plugin_name in conf["plugins"]:
+    try:
+        plugin = importlib.import_module(plugin_name)
+    except ImportError:
+        logger.error("Can't load plugin `{}`!".format(plugin_name))
+        exit()
+
+    if not hasattr(plugin, conf["name_for_injection_callable"]):
+        message = ("Plugin `{}` doesn't have `{}` callable!"
+                   .format(plugin_name, conf["name_for_injection_callable"]))
+        logger.error(message)
+        exit()
+
+    middlewares = plugin.inject_middlewares(middlewares)
 
 
 # Inits templating.
@@ -167,17 +111,17 @@ def get_articles_from_dirs(dirs):
             for key in conf["required_keys_in_article"]:
                 article[key]
         except KeyError:
-            logging.error("Required key is missing in metadata file!")
+            logger.error("Required key is missing in metadata file!")
             exit()
         for key in conf["forbidden_keys_in_article"]:
             if key in article:
-                logging.error("Forbidden key is in metadata file!")
+                logger.error("Forbidden key is in metadata file!")
                 exit()
 
         content_path = path.join(dir, article["content_path"])
         content_path = glob.glob(content_path)
         if len(content_path) != 1:
-            logging.error("Content path matched less or more than needed!")
+            logger.error("Content path matched less or more than needed!")
             exit()
         content_path = content_path[0]
 

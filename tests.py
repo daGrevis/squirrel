@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import unittest
 
-from squirrel import (Ware, MiddlewareDuplicationError, MiddlewareMissingError,
-                      MiddlewareOrderError)
+from ware import (Ware, MiddlewareDuplicationError, MiddlewareMissingError,
+                  MiddlewareOrderError)
 
 
 class TestWare(unittest.TestCase):
