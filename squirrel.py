@@ -4,14 +4,11 @@ import os.path as path
 import logging
 import argparse
 import shutil
-import fnmatch
-import glob
 import http.server as http_server
 import socketserver
 import importlib
 
 import toml
-import markdown
 import jinja2
 
 
@@ -86,63 +83,6 @@ context = {
 middlewares.run(context)
 
 
-def get_dirs_for_articles():
-    """
-    Gets directories that are valid articles. Valid is any directory that
-    contains `metadata.toml` file and lives under `PATH_TO_ARTICLES` constant.
-    """
-
-    dirs = []
-
-    for root, _, files in os.walk(conf["path_to_articles"]):
-        for file_path in fnmatch.filter(files, conf["metadata_file"]):
-            dir = path.dirname(path.join(root, file_path))
-            dirs.append(dir)
-
-    return dirs
-
-
-def get_articles_from_dirs(dirs):
-    """
-    Gets articles from article directories. Returns list of dictionaries with
-    metadata and content.
-    """
-
-    articles = []
-    for dir in dirs:
-        article = {}
-
-        with open(path.join(dir, conf["metadata_file"])) as metadata_file:
-            article = toml.loads(metadata_file.read())
-
-        try:
-            for key in conf["required_keys_in_article"]:
-                article[key]
-        except KeyError:
-            logger.error("Required key is missing in metadata file!")
-            exit()
-        for key in conf["forbidden_keys_in_article"]:
-            if key in article:
-                logger.error("Forbidden key is in metadata file!")
-                exit()
-
-        content_path = path.join(dir, article["content_path"])
-        content_path = glob.glob(content_path)
-        if len(content_path) != 1:
-            logger.error("Content path matched less or more than needed!")
-            exit()
-        content_path = content_path[0]
-
-        with open(content_path) as content_file:
-            article["raw_content"] = content_file.read()
-
-        article["content"] = markdown.markdown(article["raw_content"])
-
-        articles.append(article)
-
-    return articles
-
-
 def generate_static_for_theme():
     path_to_theme_static = path.join(path_to_theme,
                                      conf["path_to_theme_static"])
@@ -182,9 +122,6 @@ def generate():
         os.mkdir(conf["path_to_generated_content"])
     except FileExistsError:
         pass
-
-    dirs = get_dirs_for_articles()
-    articles = get_articles_from_dirs(dirs)
 
     generate_static_for_theme()
     generate_index(articles)
@@ -237,7 +174,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.action == "generate":
-        generate()
+        # generate()
+        pass
     elif args.action == "clean":
         clean()
     elif args.action == "serve":
