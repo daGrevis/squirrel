@@ -6,8 +6,6 @@ import os.path as path
 import shutil
 import tempfile
 
-import splinter
-
 import squirrel
 
 
@@ -69,7 +67,6 @@ class TestCommands(unittest.TestCase):
 
         dir_contents = os.listdir(conf["path_to_generated_content"])
         self.assertEqual(dir_contents, [])
-
 
 
 if __name__ == "__main__":
