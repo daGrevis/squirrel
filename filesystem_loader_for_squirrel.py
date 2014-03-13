@@ -6,12 +6,10 @@ import glob
 
 import toml
 
+import helpers
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-logger.addHandler(ch)
+
+logger = helpers.get_logger(__name__)
 
 
 def get_dirs_for_articles(conf):

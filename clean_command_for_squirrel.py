@@ -4,12 +4,10 @@ import os.path as path
 import shutil
 import argparse
 
+import helpers
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-logger.addHandler(ch)
+
+logger = helpers.get_logger(__name__)
 
 
 def clean_dir(context):
@@ -38,7 +36,9 @@ def clean_command(context):
         if args.action == "clean":
             clean_dir(context)
 
-            logger.info("Cleaned!")
+            message = ("Cleaned `{}`!"
+                       .format(context["conf"]["path_to_generated_content"]))
+            logger.info(message)
 
     context["clean_command"] = clean_dir
 

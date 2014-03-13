@@ -4,12 +4,10 @@ import os.path as path
 import shutil
 import argparse
 
+import helpers
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-logger.addHandler(ch)
+
+logger = helpers.get_logger(__name__)
 
 
 def generate_dir(context):

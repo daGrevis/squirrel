@@ -1,3 +1,5 @@
 toml
 markdown
 Jinja2
+splinter
+clint
