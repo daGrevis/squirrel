@@ -21,7 +21,7 @@ def get_dirs_for_articles(conf):
     dirs = []
 
     for root, _, files in os.walk(conf["path_to_articles"]):
-        for file_path in fnmatch.filter(files, conf["metadata_file"]):
+        for file_path in fnmatch.filter(files, conf["path_to_metadata_file"]):
             dir = path.dirname(path.join(root, file_path))
             dirs.append(dir)
 
@@ -38,7 +38,8 @@ def get_articles_from_dirs(conf, dirs):
     for dir in dirs:
         article = {}
 
-        with open(path.join(dir, conf["metadata_file"])) as metadata_file:
+        path_to_metadata_file = path.join(dir, conf["path_to_metadata_file"])
+        with open(path_to_metadata_file) as metadata_file:
             article = toml.loads(metadata_file.read())
 
         try:
@@ -48,10 +49,6 @@ def get_articles_from_dirs(conf, dirs):
             message = "`{}` key is missing from metadata file!".format(key)
             logger.error(message)
             exit()
-        for key in conf["forbidden_keys_in_article"]:
-            if key in article:
-                logger.error("Forbidden key is in metadata file!")
-                exit()
 
         content_path = path.join(dir, article["content_path"])
         content_path = glob.glob(content_path)

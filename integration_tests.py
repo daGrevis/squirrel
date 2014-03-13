@@ -9,7 +9,7 @@ import tempfile
 import squirrel
 
 
-conf = squirrel.get_conf()
+conf = squirrel.get_conf("test_conf")
 
 
 class TestCommands(unittest.TestCase):
@@ -27,7 +27,7 @@ class TestCommands(unittest.TestCase):
 
         path_to_metadata_file = path.join(
             path_to_article_dir,
-            "metadata.toml"
+            conf["path_to_metadata_file"]
         )
         metadata_content = (
             'title = "Foobar"\n'
@@ -46,8 +46,12 @@ class TestCommands(unittest.TestCase):
         with open(path_to_content_file, "w") as content_file:
             content_file.write("Hello, world!")
 
-        output = subprocess.check_output(["./squirrel.py", "generate"])
-        self.assertIn(b"Generated in `generated_content/`!", output)
+        expected_output = ("Generated in `{}`!"
+                           .format(conf["path_to_generated_content"])).encode()
+        actual_output = subprocess.check_output(["./squirrel.py",
+                                                 "generate",
+                                                 "--conf-name=test_conf"])
+        self.assertIn(expected_output, actual_output)
 
         path_to_index_file = path.join(
             conf["path_to_generated_content"],
@@ -62,8 +66,12 @@ class TestCommands(unittest.TestCase):
     def test_clean(self):
         tempfile.mkstemp(dir=conf["path_to_generated_content"])
 
-        output = subprocess.check_output(["./squirrel.py", "clean"])
-        self.assertIn(b"Cleaned `generated_content/`!", output)
+        expected_output = ("Cleaned `{}`!"
+                           .format(conf["path_to_generated_content"])).encode()
+        actual_output = subprocess.check_output(["./squirrel.py",
+                                                 "clean",
+                                                 "--conf-name=test_conf"])
+        self.assertIn(expected_output, actual_output)
 
         dir_contents = os.listdir(conf["path_to_generated_content"])
         self.assertEqual(dir_contents, [])

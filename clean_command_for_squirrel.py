@@ -27,10 +27,7 @@ def clean_dir(context):
 
 def clean_command(context):
     if context["is_called_from_cli"]:
-        arg_parser = argparse.ArgumentParser()
-
-        arg_parser.add_argument("action")
-
+        arg_parser = context["arg_parser"]
         args = arg_parser.parse_args()
 
         if args.action == "clean":

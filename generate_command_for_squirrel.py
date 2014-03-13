@@ -37,7 +37,7 @@ def generate_index(context):
 
     path_to_index_file = path.join(
         context["conf"]["path_to_generated_content"],
-        context["conf"]["index_file"]
+        context["conf"]["path_to_index_file"]
     )
     with open(path_to_index_file, "w") as index_file:
         index_file.write(content)
@@ -51,7 +51,7 @@ def generate_articles(context):
         )
         path_to_index_file = path.join(
             path_to_article_dir,
-            context["conf"]["index_file"]
+            context["conf"]["path_to_index_file"]
         )
 
         template = context["jinja2_env"].get_template("article.html")
@@ -64,10 +64,7 @@ def generate_articles(context):
 
 def generate_command(context):
     if context["is_called_from_cli"]:
-        arg_parser = argparse.ArgumentParser()
-
-        arg_parser.add_argument("action")
-
+        arg_parser = context["arg_parser"]
         args = arg_parser.parse_args()
 
         if args.action == "generate":
