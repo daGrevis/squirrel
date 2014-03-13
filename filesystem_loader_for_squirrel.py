@@ -45,7 +45,8 @@ def get_articles_from_dirs(conf, dirs):
             for key in conf["required_keys_in_article"]:
                 article[key]
         except KeyError:
-            logger.error("Required key is missing in metadata file!")
+            message = "`{}` key is missing from metadata file!".format(key)
+            logger.error(message)
             exit()
         for key in conf["forbidden_keys_in_article"]:
             if key in article:

@@ -76,7 +76,9 @@ def generate_command(context):
             generate_index(context)
             generate_articles(context)
 
-            logger.info("Generated!")
+            message = ("Generated in `{}`!"
+                       .format(context["conf"]["path_to_generated_content"]))
+            logger.info(message)
 
     return context
 
