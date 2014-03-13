@@ -61,7 +61,7 @@ def get_articles_from_dirs(conf, dirs):
         content_path = content_path[0]
 
         with open(content_path) as content_file:
-            article["raw_content"] = content_file.read()
+            article["content"] = content_file.read()
 
         articles.append(article)
 

@@ -51,6 +51,16 @@ class TestCommands(unittest.TestCase):
         output = subprocess.check_output(["./squirrel.py", "generate"])
         self.assertIn(b"Generated in `generated_content/`!", output)
 
+        path_to_index_file = path.join(
+            conf["path_to_generated_content"],
+            "foobar/index.html"
+        )
+        with open(path_to_index_file) as index_file:
+            content_of_index_file = index_file.read()
+
+        self.assertIn("Foobar", content_of_index_file)
+        self.assertIn("Hello, world!", content_of_index_file)
+
     def test_clean(self):
         tempfile.mkstemp(dir=conf["path_to_generated_content"])
 
