@@ -14,7 +14,7 @@ def clean_dir(context):
     try:
         names = os.listdir(context["conf"]["path_to_generated_content"])
     except FileNotFoundError:
-        logger.info("Already clean!")
+        logger.debug("Already clean!")
         return
 
     for name in names:
@@ -23,6 +23,8 @@ def clean_dir(context):
             os.unlink(name_path)
         except IsADirectoryError:
             shutil.rmtree(name_path)
+
+        logger.debug("Removing `{}`...".format(name_path))
 
 
 def clean_command(context):

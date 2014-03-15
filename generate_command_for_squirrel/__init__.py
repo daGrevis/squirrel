@@ -11,23 +11,14 @@ logger = helpers.get_logger(__name__)
 
 
 def generate_dir(context):
-    # TODO: Re-think what should happen when dir is not empty.
     context["clean_command"](context)
     try:
         os.mkdir(context["conf"]["path_to_generated_content"])
     except FileExistsError:
         pass
 
-
-def generate_static_for_theme(context):
-    path_to_theme_static = path.join(context["path_to_theme"],
-                                     context["conf"]["path_to_theme_static"])
-    path_to_generated_static = path.join(
-        context["conf"]["path_to_generated_content"],
-        context["conf"]["path_to_generated_static"]
-    )
-
-    shutil.copytree(path_to_theme_static, path_to_generated_static)
+    logger.debug("Creating `{}` for generated content..."
+                 .format(context["conf"]["path_to_generated_content"]))
 
 
 def generate_index(context):
@@ -41,6 +32,8 @@ def generate_index(context):
     )
     with open(path_to_index_file, "w") as index_file:
         index_file.write(content)
+
+    logger.debug("Writing to `{}`...".format(path_to_index_file))
 
 
 def generate_pages(context):
@@ -61,6 +54,22 @@ def generate_pages(context):
         with open(path_to_index_file, "w") as index_file:
             index_file.write(content)
 
+        logger.debug("Writing to `{}`...".format(path_to_index_file))
+
+
+def generate_static_for_theme(context):
+    path_to_theme_static = path.join(context["path_to_theme"],
+                                     context["conf"]["path_to_theme_static"])
+    path_to_generated_static = path.join(
+        context["conf"]["path_to_generated_content"],
+        context["conf"]["path_to_generated_static"]
+    )
+
+    shutil.copytree(path_to_theme_static, path_to_generated_static)
+
+    logger.debug("Copying static from `{}` to `{}`...".
+                 format(path_to_theme_static, path_to_generated_static))
+
 
 def generate_command(context):
     if context["is_called_from_cli"]:
@@ -69,9 +78,9 @@ def generate_command(context):
 
         if args.action == "generate":
             generate_dir(context)
-            generate_static_for_theme(context)
             generate_index(context)
             generate_pages(context)
+            generate_static_for_theme(context)
 
             message = ("Generated in `{}`!"
                        .format(context["conf"]["path_to_generated_content"]))

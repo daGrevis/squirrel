@@ -7,18 +7,20 @@ logger = helpers.get_logger(__name__)
 
 
 def parse_content_to_markdown(context):
-    if context["is_called_from_cli"]:
+    if not context["is_called_from_cli"]:
+        return context
 
-        arg_parser = context["arg_parser"]
-        args = arg_parser.parse_args()
+    arg_parser = context["arg_parser"]
+    args = arg_parser.parse_args()
 
-        if args.action == "generate":
+    if args.action != "generate":
+        return context
 
-            for page in context["pages"]:
-                page["content"] = markdown.markdown(page["content"])
+    for page in context["pages"]:
+        page["content"] = markdown.markdown(page["content"])
 
-                logger.debug("Parsing content to Markdown for \"{}\" page..."
-                            .format(page["title"]))
+        logger.debug("Parsing content to Markdown for \"{}\" page..."
+                    .format(page["title"]))
 
     return context
 

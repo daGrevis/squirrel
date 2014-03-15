@@ -20,6 +20,9 @@ def get_dirs_for_pages(conf):
             dir = path.dirname(path.join(root, file_path))
             dirs.append(dir)
 
+            logger.debug("Loading `{}` from `{}`..."
+                         .format(dir, conf["path_to_pages"]))
+
     return dirs
 
 
@@ -56,6 +59,15 @@ def get_pages_from_dirs(conf, dirs):
 
 
 def filesystem_loader(context):
+    if not context["is_called_from_cli"]:
+        return context
+
+    arg_parser = context["arg_parser"]
+    args = arg_parser.parse_args()
+
+    if args.action != "generate":
+        return context
+
     conf = context["conf"]
 
     dirs = get_dirs_for_pages(conf)
