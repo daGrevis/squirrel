@@ -1,6 +1,6 @@
 blog_title = "Squirrel"
 blog_description = "No Bullshit Static Blogging"
-blog_theme = "bootstrap"
+blog_theme = "lanyon"
 plugins = [
     "filesystem_loader_for_squirrel",
     "clean_command_for_squirrel",
