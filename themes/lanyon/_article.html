@@ -1,0 +1,9 @@
+<div class="post">
+    <h1 class="post-title"><a href="{{ article.slug }}">{{ article.title }}</a></h1>
+    <span class="post-meta">
+        On <span class="post-date">{{ (article.created).strftime("%y/%m/%d") }}</span>,
+        by <span class="post-date">{{ (article.author) }}</span>
+    </span>
+
+    {{ article.content }}
+</div>
