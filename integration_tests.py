@@ -14,19 +14,19 @@ conf = squirrel.get_conf("test_conf")
 
 class TestCommands(unittest.TestCase):
     def setUp(self):
-        os.mkdir(conf["path_to_articles"])
+        os.mkdir(conf["path_to_pages"])
         os.mkdir(conf["path_to_generated_content"])
 
     def tearDown(self):
-        shutil.rmtree(conf["path_to_articles"])
+        shutil.rmtree(conf["path_to_pages"])
         shutil.rmtree(conf["path_to_generated_content"])
 
     def test_generate(self):
-        path_to_article_dir = path.join(conf["path_to_articles"], "foobar")
-        os.mkdir(path_to_article_dir)
+        path_to_page_dir = path.join(conf["path_to_pages"], "foobar")
+        os.mkdir(path_to_page_dir)
 
         path_to_metadata_file = path.join(
-            path_to_article_dir,
+            path_to_page_dir,
             conf["path_to_metadata_file"]
         )
         metadata_content = (
@@ -40,7 +40,7 @@ class TestCommands(unittest.TestCase):
             metadata_file.write(metadata_content)
 
         path_to_content_file = path.join(
-            path_to_article_dir,
+            path_to_page_dir,
             "content.txt"
         )
         with open(path_to_content_file, "w") as content_file:

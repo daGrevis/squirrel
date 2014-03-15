@@ -12,15 +12,10 @@ import helpers
 logger = helpers.get_logger(__name__)
 
 
-def get_dirs_for_articles(conf):
-    """
-    Gets directories that are valid articles. Valid is any directory that
-    contains `metadata.toml` file and lives under `PATH_TO_ARTICLES` constant.
-    """
-
+def get_dirs_for_pages(conf):
     dirs = []
 
-    for root, _, files in os.walk(conf["path_to_articles"]):
+    for root, _, files in os.walk(conf["path_to_pages"]):
         for file_path in fnmatch.filter(files, conf["path_to_metadata_file"]):
             dir = path.dirname(path.join(root, file_path))
             dirs.append(dir)
@@ -28,29 +23,24 @@ def get_dirs_for_articles(conf):
     return dirs
 
 
-def get_articles_from_dirs(conf, dirs):
-    """
-    Gets articles from article directories. Returns list of dictionaries with
-    metadata and content.
-    """
-
-    articles = []
+def get_pages_from_dirs(conf, dirs):
+    pages = []
     for dir in dirs:
-        article = {}
+        page = {}
 
         path_to_metadata_file = path.join(dir, conf["path_to_metadata_file"])
         with open(path_to_metadata_file) as metadata_file:
-            article = toml.loads(metadata_file.read())
+            page = toml.loads(metadata_file.read())
 
         try:
-            for key in conf["required_keys_in_article"]:
-                article[key]
+            for key in conf["required_keys_in_page"]:
+                page[key]
         except KeyError:
             message = "`{}` key is missing from metadata file!".format(key)
             logger.error(message)
             exit()
 
-        content_path = path.join(dir, article["content_path"])
+        content_path = path.join(dir, page["content_path"])
         content_path = glob.glob(content_path)
         if len(content_path) != 1:
             logger.error("Content path matched less or more than needed!")
@@ -58,20 +48,20 @@ def get_articles_from_dirs(conf, dirs):
         content_path = content_path[0]
 
         with open(content_path) as content_file:
-            article["content"] = content_file.read()
+            page["content"] = content_file.read()
 
-        articles.append(article)
+        pages.append(page)
 
-    return articles
+    return pages
 
 
 def filesystem_loader(context):
     conf = context["conf"]
 
-    dirs = get_dirs_for_articles(conf)
-    articles = get_articles_from_dirs(conf, dirs)
+    dirs = get_dirs_for_pages(conf)
+    pages = get_pages_from_dirs(conf, dirs)
 
-    context["articles"] = articles
+    context["pages"] = pages
 
     return context
 

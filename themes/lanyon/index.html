@@ -2,9 +2,9 @@
 
 {% block content %}
 
-    {% for article in articles|sort(attribute="created", reverse=True) %}
+    {% for page in pages|sort(attribute="created", reverse=True) %}
 
-        {% include "_article.html" %}
+        {% include "_page.html" %}
 
     {% endfor %}
 

@@ -11,11 +11,11 @@ plugins = [
 path_to_metadata_file = "metadata.toml"
 path_to_index_file = "index.html"
 path_to_generated_content = "generated_content/"
-path_to_articles = "articles/"
+path_to_pages = "pages/"
 path_to_themes = "themes/"
 path_to_theme_static = "static/"
 path_to_generated_static = "static/"
-required_keys_in_article = [
+required_keys_in_page = [
     "title",
     "slug",
     "created",

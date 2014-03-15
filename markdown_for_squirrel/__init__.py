@@ -6,7 +6,7 @@ import helpers
 logger = helpers.get_logger(__name__)
 
 
-def markdownify_content(context):
+def parse_content_to_markdown(context):
     if context["is_called_from_cli"]:
 
         arg_parser = context["arg_parser"]
@@ -14,16 +14,16 @@ def markdownify_content(context):
 
         if args.action == "generate":
 
-            for article in context["articles"]:
-                article["content"] = markdown.markdown(article["content"])
+            for page in context["pages"]:
+                page["content"] = markdown.markdown(page["content"])
 
-                logger.debug("Parsing content to Markdown for `{}` article..."
-                            .format(article["title"]))
+                logger.debug("Parsing content to Markdown for \"{}\" page..."
+                            .format(page["title"]))
 
     return context
 
 
 def inject_middlewares(middlewares):
-    middlewares.add("markdownify_content", markdownify_content)
+    middlewares.add("parse_content_to_markdown", parse_content_to_markdown)
 
     return middlewares

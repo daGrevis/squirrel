@@ -33,7 +33,7 @@ def generate_static_for_theme(context):
 def generate_index(context):
     template = context["jinja2_env"].get_template("index.html")
     content = template.render(conf=context["conf"],
-                              articles=context["articles"])
+                              pages=context["pages"])
 
     path_to_index_file = path.join(
         context["conf"]["path_to_generated_content"],
@@ -43,21 +43,21 @@ def generate_index(context):
         index_file.write(content)
 
 
-def generate_articles(context):
-    for article in context["articles"]:
-        path_to_article_dir = path.join(
+def generate_pages(context):
+    for page in context["pages"]:
+        path_to_page_dir = path.join(
             context["conf"]["path_to_generated_content"],
-            article["slug"]
+            page["slug"]
         )
         path_to_index_file = path.join(
-            path_to_article_dir,
+            path_to_page_dir,
             context["conf"]["path_to_index_file"]
         )
 
-        template = context["jinja2_env"].get_template("article.html")
-        content = template.render(conf=context["conf"], article=article)
+        template = context["jinja2_env"].get_template("page.html")
+        content = template.render(conf=context["conf"], page=page)
 
-        os.mkdir(path_to_article_dir)
+        os.mkdir(path_to_page_dir)
         with open(path_to_index_file, "w") as index_file:
             index_file.write(content)
 
@@ -71,7 +71,7 @@ def generate_command(context):
             generate_dir(context)
             generate_static_for_theme(context)
             generate_index(context)
-            generate_articles(context)
+            generate_pages(context)
 
             message = ("Generated in `{}`!"
                        .format(context["conf"]["path_to_generated_content"]))

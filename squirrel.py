@@ -20,11 +20,11 @@ def get_conf(conf_name="conf"):
         "path_to_metadata_file",
         "path_to_index_file",
         "path_to_generated_content",
-        "path_to_articles",
+        "path_to_pages",
         "path_to_themes",
         "path_to_theme_static",
         "path_to_generated_static",
-        "required_keys_in_article",
+        "required_keys_in_page",
         "name_for_injection_callable",
     )
 
