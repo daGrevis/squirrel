@@ -1,8 +1,4 @@
-# Squirrel
-
-## No Bullshit Static Blogging
-
-![Squirrel](http://i.imgur.com/ibp6Bhc.jpg)
+![Squirrel](http://i.imgur.com/QhdgAJW.png)
 
 100% pluggable, no bullshit static blogging written on Python 3. **Currently
 work in progress and not suitable for real-world use.**
