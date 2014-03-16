@@ -72,19 +72,23 @@ def generate_static_for_theme(context):
 
 
 def generate_command(context):
-    if context["is_called_from_cli"]:
-        arg_parser = context["arg_parser"]
-        args = arg_parser.parse_args()
+    if not context["is_called_from_cli"]:
+        return context
 
-        if args.action == "generate":
-            generate_dir(context)
-            generate_index(context)
-            generate_pages(context)
-            generate_static_for_theme(context)
+    arg_parser = context["arg_parser"]
+    args = arg_parser.parse_args()
 
-            message = ("Generated in `{}`!"
-                       .format(context["conf"]["path_to_generated_content"]))
-            logger.info(message)
+    if args.action != "generate":
+        return context
+
+    generate_dir(context)
+    generate_index(context)
+    generate_pages(context)
+    generate_static_for_theme(context)
+
+    message = ("Generated in `{}`!"
+                .format(context["conf"]["path_to_generated_content"]))
+    logger.info(message)
 
     return context
 
