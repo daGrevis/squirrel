@@ -2,23 +2,24 @@ import logging
 import os
 import os.path as path
 import shutil
-import argparse
 
 import helpers
 
 
 logger = helpers.get_logger(__name__)
 
+conf = helpers.get_conf()
+
 
 def clean_dir(context):
     try:
-        names = os.listdir(context["conf"]["path_to_generated_content"])
+        names = os.listdir(conf["path_to_generated_content"])
     except FileNotFoundError:
         logger.debug("Already clean!")
         return
 
     for name in names:
-        name_path = path.join(context["conf"]["path_to_generated_content"], name)
+        name_path = path.join(conf["path_to_generated_content"], name)
         try:
             os.unlink(name_path)
         except IsADirectoryError:
@@ -28,18 +29,18 @@ def clean_dir(context):
 
 
 def clean_command(context):
-    if context["is_called_from_cli"]:
-        arg_parser = context["arg_parser"]
-        args = arg_parser.parse_args()
-
-        if args.action == "clean":
-            clean_dir(context)
-
-            message = ("Cleaned `{}`!"
-                       .format(context["conf"]["path_to_generated_content"]))
-            logger.info(message)
-
     context["clean_command"] = clean_dir
+
+    args = helpers.get_args()
+
+    if args.action != "clean":
+        return context
+
+    clean_dir(context)
+
+    message = ("Cleaned `{}`!"
+                .format(conf["path_to_generated_content"]))
+    logger.info(message)
 
     return context
 

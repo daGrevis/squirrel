@@ -1,10 +1,11 @@
 blog_title = "Squirrel"
 blog_description = "No Bullshit Static Blogging"
-blog_theme = "lanyon"
+site_theme = "lanyon"
 plugins = [
     "fs_reader_for_squirrel",
     "markdown_for_squirrel",
     "clean_command_for_squirrel",
+    "jinja2_templating_for_squirrel",
     "generate_command_for_squirrel"
 ]
 

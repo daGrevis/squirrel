@@ -6,10 +6,10 @@ import os.path as path
 import shutil
 import tempfile
 
-import squirrel
+import helpers
 
 
-conf = squirrel.get_conf("test_conf")
+conf = helpers.get_conf("test_conf")
 
 
 class TestCommands(unittest.TestCase):

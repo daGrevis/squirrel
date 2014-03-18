@@ -7,11 +7,7 @@ logger = helpers.get_logger(__name__)
 
 
 def parse_content_to_markdown(context):
-    if not context["is_called_from_cli"]:
-        return context
-
-    arg_parser = context["arg_parser"]
-    args = arg_parser.parse_args()
+    args = helpers.get_args()
 
     if args.action != "generate":
         return context

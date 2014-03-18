@@ -12,7 +12,10 @@ import helpers
 logger = helpers.get_logger(__name__)
 
 
-def get_dirs_for_pages(conf):
+conf = helpers.get_conf()
+
+
+def get_dirs_for_pages():
     dirs = []
 
     for root, _, files in os.walk(conf["path_to_pages"]):
@@ -26,7 +29,7 @@ def get_dirs_for_pages(conf):
     return dirs
 
 
-def get_pages_from_dirs(conf, dirs):
+def get_pages_from_dirs(dirs):
     pages = []
     for dir in dirs:
         page = {}
@@ -59,19 +62,13 @@ def get_pages_from_dirs(conf, dirs):
 
 
 def fs_reader(context):
-    if not context["is_called_from_cli"]:
-        return context
-
-    arg_parser = context["arg_parser"]
-    args = arg_parser.parse_args()
+    args = helpers.get_args()
 
     if args.action != "generate":
         return context
 
-    conf = context["conf"]
-
-    dirs = get_dirs_for_pages(conf)
-    pages = get_pages_from_dirs(conf, dirs)
+    dirs = get_dirs_for_pages()
+    pages = get_pages_from_dirs(dirs)
 
     context["pages"] = pages
 
