@@ -11,7 +11,7 @@ logger = helpers.get_logger(__name__)
 conf = helpers.get_conf()
 
 
-def clean_dir(context):
+def clean_command():
     try:
         names = os.listdir(conf["build_dir"])
     except FileNotFoundError:
@@ -28,15 +28,15 @@ def clean_dir(context):
         logger.debug("Removing `{}`...".format(name_path))
 
 
-def clean_command(context):
-    context["clean_command"] = clean_dir
+def fs_cleaner(context):
+    context["clean_command"] = clean_command
 
     args = helpers.get_args()
 
     if args.action != "clean":
         return context
 
-    clean_dir(context)
+    clean_command()
 
     message = ("Cleaned `{}`!"
                .format(conf["build_dir"]))
@@ -46,6 +46,6 @@ def clean_command(context):
 
 
 def inject_middlewares(middlewares):
-    middlewares.add("clean_command", clean_command)
+    middlewares.add("fs_cleaner", fs_cleaner)
 
     return middlewares

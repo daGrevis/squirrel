@@ -11,8 +11,9 @@ logger = helpers.get_logger(__name__)
 conf = helpers.get_conf()
 
 
-def generate_dir(context):
-    context["clean_command"](context)
+def generate_command(context):
+    context["clean_command"]()
+
     try:
         os.mkdir(conf["build_dir"])
     except FileExistsError:
@@ -65,13 +66,15 @@ def generate_static_for_theme(context):
                  format(path_to_theme_static, path_to_generated_static))
 
 
-def generate_command(context):
+def fs_writer(context):
+    context["generate_command"] = generate_command
+
     args = helpers.get_args()
 
     if args.action != "generate":
         return context
 
-    generate_dir(context)
+    generate_command(context)
     generate_index(context)
     generate_pages(context)
     generate_static_for_theme(context)
@@ -84,6 +87,6 @@ def generate_command(context):
 
 
 def inject_middlewares(middlewares):
-    middlewares.add("generate_command", generate_command)
+    middlewares.add("fs_writer", fs_writer)
 
     return middlewares
