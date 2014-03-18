@@ -16,14 +16,31 @@ def jinja2_templating(context):
     if args.action != "generate":
         return context
 
-    path_to_theme = path.join(conf["themes_dir"], conf["site_theme"])
     jinja2_env = (jinja2.Environment(
-                  loader=jinja2.FileSystemLoader(path_to_theme)))
-
-    context["path_to_theme"] = path_to_theme
-    context["jinja2_env"] = jinja2_env
+                  loader=jinja2.FileSystemLoader(conf["theme_dir"])))
 
     logger.debug("Initiating templating with Jinja2 template-language...")
+
+    html = {}
+
+    index_template = jinja2_env.get_template("index.html")
+    html["index"] = index_template.render(conf=conf, pages=context["pages"])
+
+    logger.debug("Rendering `index.html` with Jinja2...")
+
+    html["pages"] = {}
+
+    for page in context["pages"]:
+        title = page["title"]
+
+        page_template = jinja2_env.get_template("page.html")
+        html["pages"][title] = page_template.render(conf=conf, page=page)
+
+        logger.debug("Rendering `page.html` with Jinja2 for `{}` page..."
+                     .format(title))
+
+    context["jinja2_env"] = jinja2_env
+    context["html"] = html
 
     return context
 

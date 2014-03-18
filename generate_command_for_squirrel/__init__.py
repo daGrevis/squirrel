@@ -23,16 +23,12 @@ def generate_dir(context):
 
 
 def generate_index(context):
-    template = context["jinja2_env"].get_template("index.html")
-    content = template.render(conf=conf,
-                              pages=context["pages"])
-
     path_to_index_file = path.join(
         conf["build_dir"],
         conf["index_file"]
     )
     with open(path_to_index_file, "w") as index_file:
-        index_file.write(content)
+        index_file.write(context["html"]["index"])
 
     logger.debug("Writing to `{}`...".format(path_to_index_file))
 
@@ -48,18 +44,15 @@ def generate_pages(context):
             conf["index_file"]
         )
 
-        template = context["jinja2_env"].get_template("page.html")
-        content = template.render(conf=conf, page=page)
-
         os.mkdir(path_to_page_dir)
         with open(path_to_index_file, "w") as index_file:
-            index_file.write(content)
+            index_file.write(context["html"]["pages"][page["title"]])
 
         logger.debug("Writing to `{}`...".format(path_to_index_file))
 
 
 def generate_static_for_theme(context):
-    path_to_theme_static = path.join(context["path_to_theme"],
+    path_to_theme_static = path.join(conf["theme_dir"],
                                      conf["dir_for_build_static"])
     path_to_generated_static = path.join(
         conf["build_dir"],
