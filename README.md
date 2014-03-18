@@ -17,3 +17,11 @@ It's just one plugin away! What about RSS feeds and Bootstrap theme? Yes, just
 add those plugins.
 
 So lets see how it goes. It has been fun to implement that plugin part so far.
+
+# Current Plugins
+
+* `fs_reader` — reads pages from filesystem,
+* `markdown` — parses pages to Markdown,
+* `jinja2_templating` — loads theme and renders it with Jinja2,
+* `fs_cleaner` — cleans filesystem from built site,
+* `fs_writer` — writes site to filesystem;
