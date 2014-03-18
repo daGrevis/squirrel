@@ -39,7 +39,7 @@ def clean_command(context):
     clean_dir(context)
 
     message = ("Cleaned `{}`!"
-                .format(conf["path_to_generated_content"]))
+               .format(conf["path_to_generated_content"]))
     logger.info(message)
 
     return context

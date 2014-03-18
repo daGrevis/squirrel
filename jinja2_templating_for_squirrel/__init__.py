@@ -13,8 +13,8 @@ conf = helpers.get_conf()
 
 def jinja2_templating(context):
     path_to_theme = path.join(conf["path_to_themes"], conf["site_theme"])
-    jinja2_env = jinja2.Environment(loader
-                                    =jinja2.FileSystemLoader(path_to_theme))
+    jinja2_env = (jinja2.Environment(
+                  loader=jinja2.FileSystemLoader(path_to_theme)))
 
     context["path_to_theme"] = path_to_theme
     context["jinja2_env"] = jinja2_env

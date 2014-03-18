@@ -16,7 +16,7 @@ def parse_content_to_markdown(context):
         page["content"] = markdown.markdown(page["content"])
 
         logger.debug("Parsing content to Markdown for \"{}\" page..."
-                    .format(page["title"]))
+                     .format(page["title"]))
 
     return context
 

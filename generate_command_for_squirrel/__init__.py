@@ -84,7 +84,7 @@ def generate_command(context):
     generate_static_for_theme(context)
 
     message = ("Generated in `{}`!"
-                .format(conf["path_to_generated_content"]))
+               .format(conf["path_to_generated_content"]))
     logger.info(message)
 
     return context
