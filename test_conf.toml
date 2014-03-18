@@ -4,16 +4,16 @@ site_description = "No Bullshit Static Blogging"
 plugins = [
     "fs_reader_for_squirrel",
     "markdown_for_squirrel",
-    "clean_command_for_squirrel",
     "jinja2_templating_for_squirrel",
-    "generate_command_for_squirrel"
+    "clean_command_for_squirrel",
+    "fs_writer_for_squirrel"
 ]
 
 metadata_file = "metadata.toml"
 index_file = "index.html"
 build_dir = "test_build/"
 source_dir = "test_source/"
-themes_dir = "themes/lanyon/"
+theme_dir = "themes/lanyon/"
 dir_for_source_static = "static/"
 dir_for_build_static = "static/"
 
