@@ -58,7 +58,7 @@ def get_pages_from_dirs(conf, dirs):
     return pages
 
 
-def filesystem_loader(context):
+def fs_reader(context):
     if not context["is_called_from_cli"]:
         return context
 
@@ -79,6 +79,6 @@ def filesystem_loader(context):
 
 
 def inject_middlewares(middlewares):
-    middlewares.add("filesystem_loader", filesystem_loader)
+    middlewares.add("fs_reader", fs_reader)
 
     return middlewares

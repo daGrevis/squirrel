@@ -2,7 +2,7 @@ blog_title = "Squirrel"
 blog_description = "No Bullshit Static Blogging"
 blog_theme = "lanyon"
 plugins = [
-    "filesystem_loader_for_squirrel",
+    "fs_reader_for_squirrel",
     "markdown_for_squirrel",
     "clean_command_for_squirrel",
     "generate_command_for_squirrel"
