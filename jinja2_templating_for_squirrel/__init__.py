@@ -7,11 +7,15 @@ import helpers
 
 logger = helpers.get_logger(__name__)
 
-
 conf = helpers.get_conf()
 
 
 def jinja2_templating(context):
+    args = helpers.get_args()
+
+    if args.action != "generate":
+        return context
+
     path_to_theme = path.join(conf["path_to_themes"], conf["site_theme"])
     jinja2_env = (jinja2.Environment(
                   loader=jinja2.FileSystemLoader(path_to_theme)))
