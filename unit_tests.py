@@ -27,16 +27,6 @@ class TestWare(unittest.TestCase):
             middlewares.add("a", self.dummy_callable)
 
         middlewares = Ware()
-        with self.assertRaises(MiddlewareMissingError):
-            middlewares.add("b", self.dummy_callable,
-                            names_for_before_middlewares=["a"])
-
-        middlewares = Ware()
-        with self.assertRaises(MiddlewareMissingError):
-            middlewares.add("a", self.dummy_callable,
-                            names_for_after_middlewares=["b"])
-
-        middlewares = Ware()
 
         middlewares.add("a", self.dummy_callable)
         self.assertEqual(middlewares.middlewares,
@@ -46,36 +36,6 @@ class TestWare(unittest.TestCase):
         self.assertEqual(middlewares.middlewares,
                          [("a", self.dummy_callable, ),
                           ("b", self.dummy_callable, )])
-
-        middlewares.add("c", self.dummy_callable,
-                        names_for_before_middlewares=["a", "b"])
-        self.assertEqual(middlewares.middlewares,
-                         [("a", self.dummy_callable, ),
-                          ("b", self.dummy_callable, ),
-                          ("c", self.dummy_callable, )])
-
-        middlewares.add("d", self.dummy_callable,
-                        names_for_after_middlewares=["a", "b", "c"])
-        self.assertEqual(middlewares.middlewares,
-                         [("d", self.dummy_callable, ),
-                          ("a", self.dummy_callable, ),
-                          ("b", self.dummy_callable, ),
-                          ("c", self.dummy_callable, )])
-
-        with self.assertRaises(MiddlewareOrderError):
-            middlewares.add("e", self.dummy_callable,
-                            names_for_before_middlewares=["d", "a"],
-                            names_for_after_middlewares=["a", "b"])
-
-        middlewares.add("e", self.dummy_callable,
-                        names_for_before_middlewares=["d", "a"],
-                        names_for_after_middlewares=["b", "c"])
-        self.assertEqual(middlewares.middlewares,
-                         [("d", self.dummy_callable, ),
-                          ("a", self.dummy_callable, ),
-                          ("e", self.dummy_callable, ),
-                          ("b", self.dummy_callable, ),
-                          ("c", self.dummy_callable, )])
 
     def test_get_names_for_middlewares(self):
         middlewares = Ware()

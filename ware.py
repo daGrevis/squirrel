@@ -45,8 +45,7 @@ class Ware(object):
     def get_names_for_middlewares(self):
         return [name for name, _ in self.middlewares]
 
-    def add(self, middleware_name, middleware_callable,
-            names_for_before_middlewares=[], names_for_after_middlewares=[]):
+    def add(self, middleware_name, middleware_callable):
 
         if len((inspect.getfullargspec(middleware_callable)).args) != 1:
             raise MiddlewareArgumentsError(middleware_name)
@@ -57,50 +56,7 @@ class Ware(object):
             raise MiddlewareDuplicationError(middleware_name,
                                              names_for_middlewares)
 
-        if not names_for_before_middlewares and not names_for_after_middlewares:
-            (self.middlewares).append((middleware_name, middleware_callable, ))
-            return
-
-        for name in names_for_before_middlewares:
-            if name not in names_for_middlewares:
-                raise MiddlewareMissingError(name, names_for_middlewares)
-
-        for name in names_for_after_middlewares:
-            if name not in names_for_middlewares:
-                raise MiddlewareMissingError(name, names_for_middlewares)
-
-        if names_for_before_middlewares and not names_for_after_middlewares:
-            (self.middlewares).append((middleware_name, middleware_callable, ))
-            return
-
-        if not names_for_before_middlewares and names_for_after_middlewares:
-            (self.middlewares).insert(0,
-                                      (middleware_name, middleware_callable, ))
-            return
-
-        if names_for_before_middlewares and names_for_after_middlewares:
-
-            max_index_for_before_middlewares = 0
-            for name in names_for_before_middlewares:
-                i = names_for_middlewares.index(name)
-                if i > max_index_for_before_middlewares:
-                    max_index_for_before_middlewares = i
-
-            min_index_for_after_middlewares = len(names_for_middlewares)
-            for name in names_for_after_middlewares:
-                i = names_for_middlewares.index(name)
-                if i < min_index_for_after_middlewares:
-                    min_index_for_after_middlewares = i
-
-            if (max_index_for_before_middlewares
-                >= min_index_for_after_middlewares):
-                raise MiddlewareOrderError(middleware_name,
-                                           names_for_before_middlewares,
-                                           names_for_after_middlewares)
-
-            (self.middlewares).insert(min_index_for_after_middlewares,
-                                      (middleware_name, middleware_callable, ))
-            return
+        (self.middlewares).append((middleware_name, middleware_callable, ))
 
     def remove(self, middleware_name):
         names_for_middlewares = self.get_names_for_middlewares()
