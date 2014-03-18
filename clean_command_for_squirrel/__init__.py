@@ -13,13 +13,13 @@ conf = helpers.get_conf()
 
 def clean_dir(context):
     try:
-        names = os.listdir(conf["path_to_generated_content"])
+        names = os.listdir(conf["build_dir"])
     except FileNotFoundError:
         logger.debug("Already clean!")
         return
 
     for name in names:
-        name_path = path.join(conf["path_to_generated_content"], name)
+        name_path = path.join(conf["build_dir"], name)
         try:
             os.unlink(name_path)
         except IsADirectoryError:
@@ -39,7 +39,7 @@ def clean_command(context):
     clean_dir(context)
 
     message = ("Cleaned `{}`!"
-               .format(conf["path_to_generated_content"]))
+               .format(conf["build_dir"]))
     logger.info(message)
 
     return context

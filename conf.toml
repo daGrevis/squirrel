@@ -1,6 +1,7 @@
 blog_title = "Squirrel"
 blog_description = "No Bullshit Static Blogging"
 site_theme = "lanyon"
+
 plugins = [
     "fs_reader_for_squirrel",
     "markdown_for_squirrel",
@@ -9,17 +10,19 @@ plugins = [
     "generate_command_for_squirrel"
 ]
 
-path_to_metadata_file = "metadata.toml"
-path_to_index_file = "index.html"
-path_to_generated_content = "generated_content/"
-path_to_pages = "pages/"
-path_to_themes = "themes/"
-path_to_theme_static = "static/"
-path_to_generated_static = "static/"
+metadata_file = "metadata.toml"
+index_file = "index.html"
+build_dir = "build/"
+source_dir = "source/"
+themes_dir = "themes/"
+dir_for_source_static = "static/"
+dir_for_build_static = "static/"
+
 required_keys_in_page = [
     "title",
     "slug",
     "created",
     "content_path"
 ]
+
 name_for_injection_callable = "inject_middlewares"

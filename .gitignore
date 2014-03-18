@@ -1,8 +1,8 @@
 /bin/
+/build/
 /include/
 /lib/
 /man/
 *.py[co]
 /share/
 **/vendor/
-/generated_content/

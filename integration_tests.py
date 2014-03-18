@@ -14,20 +14,20 @@ conf = helpers.get_conf("test_conf")
 
 class TestCommands(unittest.TestCase):
     def setUp(self):
-        os.mkdir(conf["path_to_pages"])
-        os.mkdir(conf["path_to_generated_content"])
+        os.mkdir(conf["source_dir"])
+        os.mkdir(conf["build_dir"])
 
     def tearDown(self):
-        shutil.rmtree(conf["path_to_pages"])
-        shutil.rmtree(conf["path_to_generated_content"])
+        shutil.rmtree(conf["source_dir"])
+        shutil.rmtree(conf["build_dir"])
 
     def test_generate(self):
-        path_to_page_dir = path.join(conf["path_to_pages"], "foobar")
+        path_to_page_dir = path.join(conf["source_dir"], "foobar")
         os.mkdir(path_to_page_dir)
 
         path_to_metadata_file = path.join(
             path_to_page_dir,
-            conf["path_to_metadata_file"]
+            conf["metadata_file"]
         )
         metadata_content = (
             'title = "Foobar"\n'
@@ -47,14 +47,14 @@ class TestCommands(unittest.TestCase):
             content_file.write("Hello, world!")
 
         expected_output = ("Generated in `{}`!"
-                           .format(conf["path_to_generated_content"])).encode()
+                           .format(conf["build_dir"])).encode()
         actual_output = subprocess.check_output(["./squirrel.py",
                                                  "generate",
                                                  "--conf-name=test_conf"])
         self.assertIn(expected_output, actual_output)
 
         path_to_index_file = path.join(
-            conf["path_to_generated_content"],
+            conf["build_dir"],
             "foobar/index.html"
         )
         with open(path_to_index_file) as index_file:
@@ -64,16 +64,16 @@ class TestCommands(unittest.TestCase):
         self.assertIn("Hello, world!", content_of_index_file)
 
     def test_clean(self):
-        tempfile.mkstemp(dir=conf["path_to_generated_content"])
+        tempfile.mkstemp(dir=conf["build_dir"])
 
         expected_output = ("Cleaned `{}`!"
-                           .format(conf["path_to_generated_content"])).encode()
+                           .format(conf["build_dir"])).encode()
         actual_output = subprocess.check_output(["./squirrel.py",
                                                  "clean",
                                                  "--conf-name=test_conf"])
         self.assertIn(expected_output, actual_output)
 
-        dir_contents = os.listdir(conf["path_to_generated_content"])
+        dir_contents = os.listdir(conf["build_dir"])
         self.assertEqual(dir_contents, [])
 
 

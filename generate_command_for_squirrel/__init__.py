@@ -14,12 +14,12 @@ conf = helpers.get_conf()
 def generate_dir(context):
     context["clean_command"](context)
     try:
-        os.mkdir(conf["path_to_generated_content"])
+        os.mkdir(conf["build_dir"])
     except FileExistsError:
         pass
 
     logger.debug("Creating `{}` for generated content..."
-                 .format(conf["path_to_generated_content"]))
+                 .format(conf["build_dir"]))
 
 
 def generate_index(context):
@@ -28,8 +28,8 @@ def generate_index(context):
                               pages=context["pages"])
 
     path_to_index_file = path.join(
-        conf["path_to_generated_content"],
-        conf["path_to_index_file"]
+        conf["build_dir"],
+        conf["index_file"]
     )
     with open(path_to_index_file, "w") as index_file:
         index_file.write(content)
@@ -40,12 +40,12 @@ def generate_index(context):
 def generate_pages(context):
     for page in context["pages"]:
         path_to_page_dir = path.join(
-            conf["path_to_generated_content"],
+            conf["build_dir"],
             page["slug"]
         )
         path_to_index_file = path.join(
             path_to_page_dir,
-            conf["path_to_index_file"]
+            conf["index_file"]
         )
 
         template = context["jinja2_env"].get_template("page.html")
@@ -60,10 +60,10 @@ def generate_pages(context):
 
 def generate_static_for_theme(context):
     path_to_theme_static = path.join(context["path_to_theme"],
-                                     conf["path_to_theme_static"])
+                                     conf["dir_for_build_static"])
     path_to_generated_static = path.join(
-        conf["path_to_generated_content"],
-        conf["path_to_generated_static"]
+        conf["build_dir"],
+        conf["dir_for_build_static"]
     )
 
     shutil.copytree(path_to_theme_static, path_to_generated_static)
@@ -84,7 +84,7 @@ def generate_command(context):
     generate_static_for_theme(context)
 
     message = ("Generated in `{}`!"
-               .format(conf["path_to_generated_content"]))
+               .format(conf["build_dir"]))
     logger.info(message)
 
     return context

@@ -16,7 +16,7 @@ def jinja2_templating(context):
     if args.action != "generate":
         return context
 
-    path_to_theme = path.join(conf["path_to_themes"], conf["site_theme"])
+    path_to_theme = path.join(conf["themes_dir"], conf["site_theme"])
     jinja2_env = (jinja2.Environment(
                   loader=jinja2.FileSystemLoader(path_to_theme)))
 

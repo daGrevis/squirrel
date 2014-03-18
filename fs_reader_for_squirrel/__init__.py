@@ -18,13 +18,13 @@ conf = helpers.get_conf()
 def get_dirs_for_pages():
     dirs = []
 
-    for root, _, files in os.walk(conf["path_to_pages"]):
-        for file_path in fnmatch.filter(files, conf["path_to_metadata_file"]):
+    for root, _, files in os.walk(conf["source_dir"]):
+        for file_path in fnmatch.filter(files, conf["metadata_file"]):
             dir = path.dirname(path.join(root, file_path))
             dirs.append(dir)
 
             logger.debug("Loading `{}` from `{}`..."
-                         .format(dir, conf["path_to_pages"]))
+                         .format(dir, conf["source_dir"]))
 
     return dirs
 
@@ -34,7 +34,7 @@ def get_pages_from_dirs(dirs):
     for dir in dirs:
         page = {}
 
-        path_to_metadata_file = path.join(dir, conf["path_to_metadata_file"])
+        path_to_metadata_file = path.join(dir, conf["metadata_file"])
         with open(path_to_metadata_file) as metadata_file:
             page = toml.loads(metadata_file.read())
 
