@@ -1,5 +1,5 @@
-blog_title = "Squirrel"
-blog_description = "No Bullshit Static Blogging"
+site_title = "Squirrel"
+site_description = "No Bullshit Static Blogging"
 site_theme = "lanyon"
 
 plugins = [
