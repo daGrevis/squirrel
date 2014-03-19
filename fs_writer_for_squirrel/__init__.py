@@ -9,47 +9,40 @@ import helpers
 logger = helpers.get_logger(__name__)
 
 conf = helpers.get_conf()
+args = helpers.get_args()
 
 
-def generate_command(context):
-    context["clean_command"]()
+def prepare_dir_for_build(context):
+    clean_command = context["clean_command"]
+
+    clean_command()
 
     try:
         os.mkdir(conf["build_dir"])
     except FileExistsError:
         pass
 
-    logger.debug("Creating `{}` for generated content..."
-                 .format(conf["build_dir"]))
+    logger.debug("Creating `{}`..." .format(conf["build_dir"]))
 
 
-def generate_index(context):
-    path_to_index_file = path.join(
-        conf["build_dir"],
-        conf["index_file"]
-    )
-    with open(path_to_index_file, "w") as index_file:
-        index_file.write(context["html"]["index"])
+def write_to_virtual_fs(virtual_fs):
+    def walk_recursively(dir, path_to_current_dir):
+        for name, dir_or_file_content in dir.items():
+            if isinstance(dir_or_file_content, dict):
+                path_to_current_dir = path.join(path_to_current_dir, name)
+                os.mkdir(path_to_current_dir)
 
-    logger.debug("Writing to `{}`...".format(path_to_index_file))
+                logger.debug("Creating `{}`...".format(path_to_current_dir))
 
+                walk_recursively(dir_or_file_content, path_to_current_dir)
+            else:
+                path_to_current_file = path.join(path_to_current_dir, name)
+                with open(path_to_current_file, "w") as current_file:
+                    current_file.write(dir_or_file_content)
 
-def generate_pages(context):
-    for page in context["pages"]:
-        path_to_page_dir = path.join(
-            conf["build_dir"],
-            page["slug"]
-        )
-        path_to_index_file = path.join(
-            path_to_page_dir,
-            conf["index_file"]
-        )
+                logger.debug("Creating `{}`...".format(path_to_current_file))
 
-        os.mkdir(path_to_page_dir)
-        with open(path_to_index_file, "w") as index_file:
-            index_file.write(context["html"]["pages"][page["title"]])
-
-        logger.debug("Writing to `{}`...".format(path_to_index_file))
+    walk_recursively(virtual_fs, conf["build_dir"])
 
 
 def generate_static_for_theme(context):
@@ -67,21 +60,15 @@ def generate_static_for_theme(context):
 
 
 def fs_writer(context):
-    context["generate_command"] = generate_command
-
-    args = helpers.get_args()
-
     if args.action != "generate":
         return context
 
-    generate_command(context)
-    generate_index(context)
-    generate_pages(context)
-    generate_static_for_theme(context)
+    prepare_dir_for_build(context)
+    write_to_virtual_fs(context["virtual_fs"])
 
-    message = ("Generated in `{}`!"
-               .format(conf["build_dir"]))
-    logger.info(message)
+    generate_static_for_theme(context)  # TODO: Hello! Where do I belong?
+
+    logger.info("Generated `{}`!" .format(conf["build_dir"]))
 
     return context
 

@@ -5,6 +5,8 @@ plugins = [
     "fs_reader_for_squirrel",
     "markdown_for_squirrel",
     "jinja2_templating_for_squirrel",
+    "index_renderer_for_squirrel",
+    "pages_renderer_for_squirrel",
     "fs_cleaner_for_squirrel",
     "fs_writer_for_squirrel"
 ]
