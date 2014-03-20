@@ -26,17 +26,17 @@ def prepare_dir_for_build(context):
 
 
 def write_to_virtual_fs(virtual_fs):
-    def walk_recursively(dir, path_to_current_dir):
+    def walk_recursively(dir, dir_path):
         for name, dir_or_file_content in dir.items():
             if isinstance(dir_or_file_content, dict):
-                path_to_current_dir = path.join(path_to_current_dir, name)
+                path_to_current_dir = path.join(dir_path, name)
                 os.mkdir(path_to_current_dir)
 
                 logger.debug("Creating `{}`...".format(path_to_current_dir))
 
                 walk_recursively(dir_or_file_content, path_to_current_dir)
             else:
-                path_to_current_file = path.join(path_to_current_dir, name)
+                path_to_current_file = path.join(dir_path, name)
                 with open(path_to_current_file, "w") as current_file:
                     current_file.write(dir_or_file_content)
 
