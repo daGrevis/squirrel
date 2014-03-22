@@ -9,21 +9,25 @@ conf = helpers.get_conf()
 args = helpers.get_args()
 
 
-def render_template(template_name, template_data):
-    jinja2_env = (jinja2.Environment(
-                  loader=jinja2.FileSystemLoader(conf["theme_dir"])))
+class TemplateRenderer(object):
+    jinja2_env = None
 
-    template = jinja2_env.get_template(template_name)
-    content = template.render(**template_data)
+    def render_template(self, template_name, template_data):
+        if self.jinja2_env is None:
+            jinja2_loader = jinja2.FileSystemLoader(conf["theme_dir"])
+            self.jinja2_env = jinja2.Environment(loader=jinja2_loader)
 
-    return content
+        template = (self.jinja2_env).get_template(template_name)
+        content = template.render(**template_data)
+
+        return content
 
 
 def jinja2_templating(context):
     if args.action != "generate":
         return context
 
-    context["render_template"] = render_template
+    context["render_template"] = TemplateRenderer().render_template
 
     logger.debug("Initiating templating with Jinja2 template-language...")
 
