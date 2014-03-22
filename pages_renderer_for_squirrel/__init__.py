@@ -11,15 +11,18 @@ def pages_renderer(context):
     if args.action != "generate":
         return context
 
-    virtual_fs = context.get("virtual_fs", {})
+    render_template = context["render_template"]
 
-    template = context["jinja2_env"].get_template("page.html")
+    virtual_fs = context.get("virtual_fs", {})
 
     virtual_fs["pages"] = {}
 
     for page in context["pages"]:
-        content = template.render(conf=conf, pages=context["pages"],
-                                  page=page)
+        content = render_template("page.html", {
+            "conf": conf,
+            "pages": context["pages"],
+            "page": page,
+        })
 
         path_to_index_file = "pages/{}/{}".format(page["slug"],
                                                   conf["index_file"])

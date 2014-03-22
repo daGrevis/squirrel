@@ -11,10 +11,14 @@ def index_renderer(context):
     if args.action != "generate":
         return context
 
+    render_template = context["render_template"]
+
     virtual_fs = context.get("virtual_fs", {})
 
-    template = context["jinja2_env"].get_template("index.html")
-    content = template.render(conf=conf, pages=context["pages"])
+    content = render_template("index.html", {
+        "conf": conf,
+        "pages": context["pages"],
+    })
 
     logger.debug("Rendering `{}`...".format(conf["index_file"]))
 
