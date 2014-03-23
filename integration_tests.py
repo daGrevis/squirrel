@@ -46,7 +46,7 @@ class TestCommands(unittest.TestCase):
         with open(path_to_content_file, "w") as content_file:
             content_file.write("Hello, world!")
 
-        expected_output = ("Generated in `{}`!"
+        expected_output = ("Generated `{}`!"
                            .format(conf["build_dir"])).encode()
         actual_output = subprocess.check_output(["./squirrel.py",
                                                  "generate",
@@ -55,7 +55,7 @@ class TestCommands(unittest.TestCase):
 
         path_to_index_file = path.join(
             conf["build_dir"],
-            "foobar/index.html"
+            "pages/foobar/index.html"
         )
         with open(path_to_index_file) as index_file:
             content_of_index_file = index_file.read()
