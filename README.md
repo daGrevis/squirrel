@@ -23,5 +23,7 @@ So lets see how it goes. It has been fun to implement that plugin part so far.
 * `fs_reader` — reads pages from filesystem,
 * `markdown` — parses pages to Markdown,
 * `jinja2_templating` — loads theme and renders it with Jinja2,
+* `index_renderer_for_squirrel` — renders index of site,
+* `pages_renderer_for_squirrel` — renders pages of site,
 * `fs_cleaner` — cleans filesystem from built site,
 * `fs_writer` — writes site to filesystem;
