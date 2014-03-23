@@ -2,7 +2,7 @@
 import unittest
 
 from ware import (Ware, MiddlewareDuplicationError, MiddlewareMissingError,
-                  MiddlewareOrderError, MiddlewareArgumentsError)
+                  MiddlewareArgumentsError)
 
 
 class TestWare(unittest.TestCase):

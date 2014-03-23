@@ -32,7 +32,8 @@ def pages_renderer(context):
         virtual_fs["pages"][page["slug"]] = {}
         virtual_fs["pages"][page["slug"]][conf["index_file"]] = content
 
-        logger.debug("Writing `{}` to virtual fs...".format(path_to_index_file))
+        logger.debug("Writing `{}` to virtual fs..."
+                     .format(path_to_index_file))
 
     context["virtual_fs"] = virtual_fs
 

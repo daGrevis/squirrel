@@ -1,4 +1,3 @@
-import logging
 import os
 import os.path as path
 import shutil
@@ -38,9 +37,7 @@ def fs_cleaner(context):
 
     clean_command()
 
-    message = ("Cleaned `{}`!"
-               .format(conf["build_dir"]))
-    logger.info(message)
+    logger.info("Cleaned `{}`!" .format(conf["build_dir"]))
 
     return context
 

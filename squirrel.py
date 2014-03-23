@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import os.path as path
 import importlib
 
 from ware import Ware

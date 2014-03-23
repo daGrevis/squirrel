@@ -14,6 +14,7 @@ TYPES_TO_COLOR_CALLABLES = {
     "DEBUG": colored.blue,
 }
 
+
 class ColoredFormatter(logging.Formatter):
     def __init__(self, msg):
         super().__init__(msg)

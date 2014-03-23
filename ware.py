@@ -22,7 +22,7 @@ class MiddlewareOrderError(Exception):
     def __init__(self, middleware_name,
                  names_for_before_middlewares, names_for_after_middlewares):
         message = ("Middleware `{}` can't be added before `{}` middlewares"
-                    " and after `{}` middlewares!"
+                   " and after `{}` middlewares!"
                    .format(middleware_name,
                            names_for_before_middlewares,
                            names_for_after_middlewares))
@@ -62,7 +62,8 @@ class Ware(object):
         names_for_middlewares = self.get_names_for_middlewares()
 
         if middleware_name not in names_for_middlewares:
-            raise MiddlewareMissingError(middleware_name, names_for_middlewares)
+            raise MiddlewareMissingError(middleware_name,
+                                         names_for_middlewares)
 
         for i, (name, _) in enumerate(self.middlewares):
             if name == middleware_name:
