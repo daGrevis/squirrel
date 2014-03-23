@@ -3,6 +3,7 @@ site_description = "No Bullshit Static Blogging"
 
 plugins = [
     "fs_reader_for_squirrel",
+    "auto_slugify_for_squirrel",
     "markdown_for_squirrel",
     "jinja2_templating_for_squirrel",
     "index_renderer_for_squirrel",
@@ -21,8 +22,6 @@ dir_for_build_static = "static/"
 
 required_keys_in_page = [
     "title",
-    "slug",
-    "created",
     "content_path"
 ]
 

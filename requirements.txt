@@ -1,3 +1,4 @@
-toml
-Jinja2
+awesome-slugify
 clint
+Jinja2
+toml
